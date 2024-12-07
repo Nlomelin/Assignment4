@@ -6,7 +6,6 @@ public class PasswordStrengthChecker {
     static final int M_CHAINING = 1000;
     static final int M_PROBING = 20000;
 
-    // Node class for separate chaining
     static class Node {
         String key;
         int value;
@@ -19,7 +18,6 @@ public class PasswordStrengthChecker {
         }
     }
 
-    // Hash table for separate chaining
     static class HashTableChaining {
         Node[] table;
         int comparisons;
@@ -70,7 +68,6 @@ public class PasswordStrengthChecker {
         }
     }
 
-    // Hash table for linear probing
     static class HashTableProbing {
         String[] table;
         int[] values;
@@ -118,7 +115,6 @@ public class PasswordStrengthChecker {
     }
 
     public static void main(String[] args) throws IOException {
-        // Load dictionary
         BufferedReader br = new BufferedReader(new FileReader("wordlist.10000"));
         List<String> words = new ArrayList<>();
         String line;
@@ -129,13 +125,11 @@ public class PasswordStrengthChecker {
         }
         br.close();
 
-        // Create hash tables
         HashTableChaining chaining1 = new HashTableChaining(M_CHAINING);
         HashTableChaining chaining2 = new HashTableChaining(M_CHAINING);
         HashTableProbing probing1 = new HashTableProbing(M_PROBING);
         HashTableProbing probing2 = new HashTableProbing(M_PROBING);
-
-        // Insert words into hash tables
+        
         int lineNumber = 1;
         for (String word : words) {
             chaining1.insert(word, lineNumber, false);
@@ -145,7 +139,6 @@ public class PasswordStrengthChecker {
             lineNumber++;
         }
 
-        // Test passwords
         String[] passwords = {
                 "account8",
                 "accountability",
@@ -157,14 +150,12 @@ public class PasswordStrengthChecker {
         for (String password : passwords) {
             System.out.println("Testing password: " + password);
 
-            // Strong password checks
             boolean isStrong = password.length() >= 8;
             boolean foundInChaining1 = chaining1.search(password, false);
             boolean foundInChaining2 = chaining2.search(password, true);
             boolean foundInProbing1 = probing1.search(password, false);
             boolean foundInProbing2 = probing2.search(password, true);
 
-            // Check if password with digit suffix exists
             for (int i = 0; i <= 9; i++) {
                 String modified = password + i;
                 foundInChaining1 |= chaining1.search(modified, false);
@@ -175,7 +166,6 @@ public class PasswordStrengthChecker {
 
             isStrong &= !foundInChaining1 && !foundInProbing1;
 
-            // Print results
             System.out.println("Strong: " + isStrong);
             System.out.println("Comparisons (Chaining, Old): " + chaining1.comparisons);
             System.out.println("Comparisons (Chaining, New): " + chaining2.comparisons);
